@@ -1,4 +1,4 @@
--- | Minify JS and CSS files similar to the following example:
+-- | Minify JS and CSS files using no external @$PATH@ dependencies.
 --
 -- @
 -- main :: IO ()
@@ -24,17 +24,31 @@ import qualified Text.Jasmine               as JS
 -- | Given a @.min.js@ path, find the @.js@ file and minify it into the specified file name.
 minifyJs :: FilePath -- ^ Desired minified JS files (ex: @"//*.min.js"@)
          -> Action ()
-minifyJs minJs = do
-    let js = dropExtension minJs -<.> "js"
+minifyJs = minifyCss' ((-<.> "js") . dropExtension)
+
+
+-- | Same as `minifyJs` except take a function for custom file path mapping.
+minifyJs' :: (FilePath -> FilePath) -- ^ Given a target minified JS file path, return the source JS file path.
+          -> FilePath               -- ^ Desired minified JS file (ex: @"//*.min.js"@)
+          -> Action ()
+minifyJs' fromMin minJs = do
+    let js = fromMin minJs
     need [js]
     liftIO $ BS.writeFile minJs =<< JS.minifyFile js
 
 
 -- | Given a @.min.css@ path, find the @.css@ file and minify it into the specified file name.
-minifyCss :: FilePath -- ^ Desired minified CSS files (ex: @"//*.min.css"@)
+minifyCss :: FilePath -- ^ Desired minified CSS file (ex: @"//*.min.css"@)
           -> Action ()
-minifyCss minCss = do
-    let css = dropExtension minCss -<.> "css"
+minifyCss = minifyCss' ((-<.> "css") . dropExtension)
+
+
+-- | Same as `minifyCss` except take a function for custom file path mapping.
+minifyCss' :: (FilePath -> FilePath) -- ^ Given a target minified CSS file path, return the source CSS file path.
+           -> FilePath               -- ^ Target minified CSS file (ex: @"//*.min.css"@)
+           -> Action ()
+minifyCss' fromMin minCss = do
+    let css = fromMin minCss
     need [css]
     liftIO $ TIO.writeFile minCss . LT.toStrict . LTB.toLazyText . minify =<< TIO.readFile css
   where minify = either error CSS.renderNestedBlocks . CSS.parseNestedBlocks
