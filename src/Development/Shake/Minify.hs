@@ -24,7 +24,7 @@ import qualified Text.Jasmine               as JS
 -- | Given a @.min.js@ path, find the @.js@ file and minify it into the specified file name.
 minifyJs :: FilePath -- ^ Desired minified JS files (ex: @"//*.min.js"@)
          -> Action ()
-minifyJs = minifyCss' ((-<.> "js") . dropExtension)
+minifyJs = minifyJs' ((-<.> "js") . dropExtension)
 
 
 -- | Same as `minifyJs` except take a function for custom file path mapping.
