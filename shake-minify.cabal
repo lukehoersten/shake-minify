@@ -8,10 +8,11 @@ license:             BSD3
 license-file:        LICENSE
 author:              Luke Hoersten
 maintainer:          luke@hoersten.org
-homepage:            https://github.com/LukeHoersten/shake-minify
 category:            Shake, Web, Development
 build-type:          Simple
 cabal-version:       >=1.10
+homepage:            https://github.com/LukeHoersten/shake-minify
+bug-reports:         https://github.com/LukeHoersten/shake-minify/issues
 
 library
   exposed-modules:     Development.Shake.Minify
